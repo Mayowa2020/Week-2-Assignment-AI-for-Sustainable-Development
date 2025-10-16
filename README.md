@@ -135,8 +135,9 @@ RandomForestRegressor(
     n_jobs=-1
 )
 
-### 7. | Metric       | Description                  | Purpose                                     |
+### 7.
 
+| Metric       | Description                  | Purpose                                     |
 | ------------ | ---------------------------- | ------------------------------------------- |
 | **MAE**      | Mean Absolute Error          | Measures average prediction error magnitude |
 | **RMSE**     | Root Mean Squared Error      | Penalizes larger deviations                 |
