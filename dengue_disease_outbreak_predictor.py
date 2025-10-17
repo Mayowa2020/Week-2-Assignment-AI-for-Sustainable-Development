@@ -129,3 +129,27 @@ plt.show()
 joblib.dump(rf, 'rf_disease_model.joblib')
 
 
+""" Explanation of the code
+
+1. This section imports all the necessary libraries for the project.
+
+ - os: Used for interacting with the operating system, although it's not directly used in the
+current code flow.
+ - pandas: A fundamental library for data manipulation and analysis, particularly with DataFrames.
+ - numpy: A library for numerical operations and working with arrays.
+ - sklearn.ensemble.RandomForestRegressor: Imports the RandomForestRegressor model from scikit-learn,
+which is used for building the prediction model.
+ - sklearn.model_selection: Contains tools for splitting data and hyperparameter tuning.
+ - train_test_split: Used for splitting data into training and testing sets.
+ - RandomizedSearchCV: A method for hyperparameter tuning.
+ - TimeSeriesSplit: A cross-validation method specifically for time series data.
+ - sklearn.metrics: Provides functions for evaluating model performance.
+ - mean_absolute_error: Calculates the mean absolute error.
+ - mean_squared_error: Calculates the mean squared error.
+ - r2_score: Calculates the R-squared value.
+ - matplotlib.pyplot: A plotting library for creating visualizations.
+ - joblib: Used for saving and loading Python objects, particularly scikit-learn models.
+"""
+
+
+

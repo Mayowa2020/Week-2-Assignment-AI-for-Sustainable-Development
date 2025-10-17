@@ -2,12 +2,12 @@
 
 ## 🦠 Disease Outbreak Predictor (SDG 3 — Good Health & Well-Being)
 
-🎯 Project Overview
+### 🎯 Project Overview
 
 This project demonstrates how machine learning can contribute to the United Nations Sustainable Development Goal 3 (SDG 3) — Good Health and Well-Being.
 It implements a supervised learning model that predicts the number of dengue cases based on historical and environmental data. Early predictions can help health authorities allocate resources effectively, enabling timely interventions to prevent widespread outbreaks.
 
-📘 Table of Contents
+### 📘 Table of Contents
 
 1. Background
 
@@ -142,3 +142,86 @@ RandomForestRegressor(
 | **MAE**      | Mean Absolute Error          | Measures average prediction error magnitude |
 | **RMSE**     | Root Mean Squared Error      | Penalizes larger deviations                 |
 | **R² Score** | Coefficient of Determination | Explains variance captured by the model     |
+
+### 8. Ethical Considerations
+
+Data Bias: Incomplete or under-reported cases may bias predictions in low-resource regions.
+
+Fairness: Model should complement, not replace, expert epidemiological judgment.
+
+Privacy: All data used is aggregated and publicly available.
+
+Sustainability: The lightweight model can be deployed on modest computing resources.
+
+### 9. Results & Visualization
+
+Visualizations include:
+
+Actual vs. Predicted dengue case plots
+
+Feature importance rankings
+
+Example output:
+
+MAE: 12.8
+RMSE: 18.3
+R²: 0.81
+
+The model successfully captures outbreak patterns with strong predictive accuracy.
+
+### 10. How to Run Locally
+
+🧩 Prerequisites
+
+Ensure Python 3.9+ is installed.
+
+⚙️ Setup Instructions
+
+```bash
+# Clone this repository
+git clone https://github.com/<your-username>/dengue-disease-outbreak-predictor.git
+cd dengue-disease-outbreak-predictor
+
+# Create a virtual environment
+python -m venv venv
+source venv/bin/activate  # (Windows: venv\\Scripts\\activate)
+
+# Install dependencies
+
+pip install -r requirements.txt
+
+# Run the script
+python disease_outbreak_predictor.py
+```
+
+### 11. Technologies Used
+
+Python
+
+pandas, NumPy — Data processing
+
+scikit-learn — Machine learning algorithms
+
+matplotlib — Visualization
+
+joblib — Model serialization
+
+### 12. Future Enhancements
+
+🔹 Integrate LightGBM/XGBoost for better performance.
+
+🔹 Add real-time data ingestion using APIs or IoT devices.
+
+🔹 Build a Streamlit dashboard for interactive visualization.
+
+🔹 Extend to multi-disease modeling (e.g., malaria, chikungunya).
+
+🔹 Include quantile regression for uncertainty estimation.
+
+### 13. Reference
+
+Kaggle — DengAI: Predicting Disease Spread
+
+✨ Acknowledgements
+
+Developed as part of an academic assignment exploring AI for Sustainable Development, demonstrating the power of machine learning to enhance global health outcomes.
