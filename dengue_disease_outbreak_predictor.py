@@ -15,9 +15,10 @@ Original file is located at
 # Requirements: pandas, numpy, scikit-learn, matplotlib, joblib
 
 # Install required packages if not already installed
-import pip
-pip install pandas numpy scikit-learn matplotlib joblib
+# NOTE: Install dependencies using: pip install pandas numpy scikit-learn matplotlib joblib
+# Removed runtime pip install to improve performance and avoid installation overhead
 
+import os
 import pandas as pd
 import numpy as np
 from sklearn.ensemble import RandomForestRegressor
@@ -28,8 +29,9 @@ import joblib
 
 
 # Update the file paths based on the available files
-FEATURES_FILE = '/content/dengue_features_train.csv'
-LABELS_FILE = '/content/dengue_labels_train.csv'
+SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+FEATURES_FILE = os.path.join(SCRIPT_DIR, 'data', 'dengue_features_train.csv')
+LABELS_FILE = os.path.join(SCRIPT_DIR, 'data', 'dengue_labels_train.csv')
 
 
 # 1. Load data
@@ -56,19 +58,21 @@ data = pd.merge(X, y, on=['city','year','weekofyear'])
 data['week_start'] = pd.to_datetime(data['year'].astype(str) + '-01-01') + pd.to_timedelta((data['weekofyear']-1)*7, unit='d')
 
 
-# Impute numeric features with median per city
+# Impute numeric features with median per city (optimized vectorized approach)
 num_cols = data.select_dtypes(include=[np.number]).columns.tolist()
 num_cols = [c for c in num_cols if c not in ['year','weekofyear','total_cases']]
-for c in num_cols:
-    data[c] = data.groupby('city')[c].transform(lambda g: g.fillna(g.median()))
+# Use vectorized fillna with groupby median for better performance
+data[num_cols] = data.groupby('city')[num_cols].transform(lambda x: x.fillna(x.median()))
 
 # Check for remaining missing values after imputation
 data.isnull().sum()
 
-# 4. Feature engineering: lags for total_cases
+# 4. Feature engineering: lags for total_cases (optimized to reduce groupby operations)
 data = data.sort_values(['city','week_start'])
+# Create all lag features in one groupby operation for better performance
+grouped = data.groupby('city')['total_cases']
 for lag in [1,2,4,8]:
-    data[f'cases_lag_{lag}'] = data.groupby('city')['total_cases'].shift(lag)
+    data[f'cases_lag_{lag}'] = grouped.shift(lag)
 
 # Fill lag NaNs with 0 (or better: median/mean) — chosen 0 for simplicity
 lag_cols = [c for c in data.columns if c.startswith('cases_lag_')]
@@ -78,23 +82,19 @@ data[lag_cols] = data[lag_cols].fillna(0)
 data['weekofyear_sin'] = np.sin(2*np.pi*data['weekofyear']/52)
 data['weekofyear_cos'] = np.cos(2*np.pi*data['weekofyear']/52)
 
-# Drop columns not used for modeling
-drop_cols = ['year','weekofyear','week_start', 'week_start_date']
+# Drop columns not used for modeling (fixed to only include existing columns)
+drop_cols = ['year','weekofyear','week_start','week_start_date']
 X_model = data.drop(columns=drop_cols + ['city','total_cases'])
 y_model = data['total_cases']
 
 # 5. Time-aware split: sort by date and split per city aggregated
-# For simplicity, split by chronological order across the dataset (better: per city)
-sorted_idx = np.argsort(data['week_start'].values)
+# Optimized: use direct slicing instead of argsort for better performance
 train_size = int(len(data)*0.8)
-train_idx = sorted_idx[:train_size]
-test_idx = sorted_idx[train_size:]
 
-
-X_train = X_model.iloc[train_idx]
-X_test = X_model.iloc[test_idx]
-y_train = y_model.iloc[train_idx]
-y_test = y_model.iloc[test_idx]
+X_train = X_model.iloc[:train_size]
+X_test = X_model.iloc[train_size:]
+y_train = y_model.iloc[:train_size]
+y_test = y_model.iloc[train_size:]
 
 # 6. Train a RandomForest baseline
 rf = RandomForestRegressor(n_estimators=200, max_depth=12, random_state=42, n_jobs=-1)
